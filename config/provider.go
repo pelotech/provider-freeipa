@@ -7,34 +7,33 @@ package config
 import (
 	// Note(turkenh): we are importing this to embed provider schema document
 	_ "embed"
-
 	ujconfig "github.com/crossplane/upjet/pkg/config"
 
 	"github.com/pelotech/provider-freeipa/config/automemberadd"
-	"github.com/pelotech/provider-freeipa/config/automemberadd_condition"
-	"github.com/pelotech/provider-freeipa/config/dns_record"
-	"github.com/pelotech/provider-freeipa/config/dns_zone"
+	"github.com/pelotech/provider-freeipa/config/automemberaddcondition"
+	"github.com/pelotech/provider-freeipa/config/dnsrecord"
+	"github.com/pelotech/provider-freeipa/config/dnszone"
 	"github.com/pelotech/provider-freeipa/config/group"
-	"github.com/pelotech/provider-freeipa/config/hbac_policy"
-	"github.com/pelotech/provider-freeipa/config/hbac_policy_host_membership"
-	"github.com/pelotech/provider-freeipa/config/hbac_policy_service_membership"
-	"github.com/pelotech/provider-freeipa/config/hbac_policy_user_membership"
+	"github.com/pelotech/provider-freeipa/config/hbacpolicy"
+	"github.com/pelotech/provider-freeipa/config/hbacpolicyhostmembership"
+	"github.com/pelotech/provider-freeipa/config/hbacpolicyservicemembership"
+	"github.com/pelotech/provider-freeipa/config/hbacpolicyusermembership"
 	"github.com/pelotech/provider-freeipa/config/host"
-	"github.com/pelotech/provider-freeipa/config/host_hostgroup_membership"
 	"github.com/pelotech/provider-freeipa/config/hostgroup"
-	"github.com/pelotech/provider-freeipa/config/sudo_cmd"
-	"github.com/pelotech/provider-freeipa/config/sudo_cmdgroup"
-	"github.com/pelotech/provider-freeipa/config/sudo_cmdgroup_membership"
-	"github.com/pelotech/provider-freeipa/config/sudo_rule"
-	"github.com/pelotech/provider-freeipa/config/sudo_rule_allowcmd_membership"
-	"github.com/pelotech/provider-freeipa/config/sudo_rule_denycmd_membership"
-	"github.com/pelotech/provider-freeipa/config/sudo_rule_host_membership"
-	"github.com/pelotech/provider-freeipa/config/sudo_rule_option"
-	"github.com/pelotech/provider-freeipa/config/sudo_rule_runasgroup_membership"
-	"github.com/pelotech/provider-freeipa/config/sudo_rule_runasuser_membership"
-	"github.com/pelotech/provider-freeipa/config/sudo_rule_user_membership"
+	"github.com/pelotech/provider-freeipa/config/hosthostgroupmembership"
+	"github.com/pelotech/provider-freeipa/config/sudocmd"
+	"github.com/pelotech/provider-freeipa/config/sudocmdgroup"
+	"github.com/pelotech/provider-freeipa/config/sudocmdgroupmembership"
+	"github.com/pelotech/provider-freeipa/config/sudorule"
+	"github.com/pelotech/provider-freeipa/config/sudoruleallowcmdmembership"
+	"github.com/pelotech/provider-freeipa/config/sudoruledenycmdmembership"
+	"github.com/pelotech/provider-freeipa/config/sudorulehostmembership"
+	"github.com/pelotech/provider-freeipa/config/sudoruleoption"
+	"github.com/pelotech/provider-freeipa/config/sudorulerunasgroupmembership"
+	"github.com/pelotech/provider-freeipa/config/sudorulerunasusermembership"
+	"github.com/pelotech/provider-freeipa/config/sudoruleusermembership"
 	"github.com/pelotech/provider-freeipa/config/user"
-	"github.com/pelotech/provider-freeipa/config/user_group_membership"
+	"github.com/pelotech/provider-freeipa/config/usergroupmembership"
 )
 
 const (
@@ -61,30 +60,30 @@ func GetProvider() *ujconfig.Provider {
 	for _, configure := range []func(provider *ujconfig.Provider){
 		// add custom config functions
 		automemberadd.Configure,
-		automemberadd_condition.Configure,
-		dns_record.Configure,
-		dns_zone.Configure,
+		automemberaddcondition.Configure,
+		dnsrecord.Configure,
+		dnszone.Configure,
 		group.Configure,
-		hbac_policy.Configure,
-		hbac_policy_host_membership.Configure,
-		hbac_policy_service_membership.Configure,
-		hbac_policy_user_membership.Configure,
+		hbacpolicy.Configure,
+		hbacpolicyhostmembership.Configure,
+		hbacpolicyservicemembership.Configure,
+		hbacpolicyusermembership.Configure,
 		host.Configure,
-		host_hostgroup_membership.Configure,
+		hosthostgroupmembership.Configure,
 		hostgroup.Configure,
-		sudo_cmd.Configure,
-		sudo_cmdgroup.Configure,
-		sudo_cmdgroup_membership.Configure,
-		sudo_rule.Configure,
-		sudo_rule_allowcmd_membership.Configure,
-		sudo_rule_denycmd_membership.Configure,
-		sudo_rule_host_membership.Configure,
-		sudo_rule_option.Configure,
-		sudo_rule_runasgroup_membership.Configure,
-		sudo_rule_runasuser_membership.Configure,
-		sudo_rule_user_membership.Configure,
+		sudocmd.Configure,
+		sudocmdgroup.Configure,
+		sudocmdgroupmembership.Configure,
+		sudorule.Configure,
+		sudoruleallowcmdmembership.Configure,
+		sudoruledenycmdmembership.Configure,
+		sudorulehostmembership.Configure,
+		sudoruleoption.Configure,
+		sudorulerunasgroupmembership.Configure,
+		sudorulerunasusermembership.Configure,
+		sudoruleusermembership.Configure,
 		user.Configure,
-		user_group_membership.Configure,
+		usergroupmembership.Configure,
 	} {
 		configure(pc)
 	}
