@@ -1,0 +1,12 @@
+apiVersion: user_group_membership.pelotech/v1alpha1
+kind: GroupMembership
+metadata:
+  annotations:
+    meta.upbound.io/example-id: user_group_membership/v1alpha1/groupmembership
+  labels:
+    testing.upbound.io/example-name: test-0
+  name: test-0
+spec:
+  forProvider:
+    name: test-group-2
+    user: roman

@@ -1,0 +1,12 @@
+apiVersion: sudo_rule_runasgroup_membership.pelotech/v1alpha1
+kind: RuleRunasgroupMembership
+metadata:
+  annotations:
+    meta.upbound.io/example-id: sudo_rule_runasgroup_membership/v1alpha1/rulerunasgroupmembership
+  labels:
+    testing.upbound.io/example-name: group-0
+  name: group-0
+spec:
+  forProvider:
+    name: sudo-rule-test
+    runasgroup: group01

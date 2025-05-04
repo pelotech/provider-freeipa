@@ -1,40 +1,1037 @@
-name: hashicorp/null
+name: rework-space-com/freeipa
 resources:
-    null_resource:
+    freeipa_automemberadd:
         subCategory: ""
-        description: The null_resource resource implements the standard resource lifecycle but takes no further action. On Terraform 1.4 and later, use the terraform_data resource type https://developer.hashicorp.com/terraform/language/resources/terraform-data instead. The triggers argument allows specifying an arbitrary set of values that, when changed, will cause the resource to be replaced.
-        name: null_resource
-        title: null_resource Resource - terraform-provider-null
+        description: FreeIPA Automember resource
+        name: freeipa_automemberadd
+        title: freeipa_automemberadd Resource - freeipa
         examples:
-            - name: cluster
+            - name: automember
               manifest: |-
                 {
-                  "connection": [
-                    {
-                      "host": "${element(aws_instance.cluster[*].public_ip, 0)}"
-                    }
-                  ],
-                  "provisioner": {
-                    "remote-exec": [
-                      {
-                        "inline": [
-                          "bootstrap-cluster.sh ${join(\" \",\n      aws_instance.cluster[*].private_ip)}"
-                        ]
-                      }
-                    ]
-                  },
-                  "triggers": {
-                    "cluster_instance_ids": "${join(\",\", aws_instance.cluster[*].id)}"
-                  }
+                  "name": "${freeipa_hostgroup.hostgroup.name}",
+                  "type": "hostgroup"
                 }
+              references:
+                name: freeipa_hostgroup.hostgroup.name
               dependencies:
-                aws_instance.cluster: |-
+                freeipa_hostgroup.hostgroup: |-
                     {
-                      "ami": "ami-0dcc1e21636832c5d",
-                      "count": 3,
-                      "instance_type": "m5.large"
+                      "description": "my-hostgroup desc",
+                      "name": "my-hostgroup"
                     }
         argumentDocs:
-            id: (String) This is set to a random value at create time.
-            triggers: (Map of String) A map of arbitrary strings that, when changed, will force the null resource to be replaced, re-running any associated provisioners.
+            addattr: (List of String) Add an attribute/value pair. Format is attr=value. The attribute must be part of the schema.
+            description: (String) Automember rule description
+            id: (String) ID of the resource
+            name: (String) Automember rule name
+            setattr: (List of String) Set an attribute to a name/value pair. Format is attr=value.
+            type: (String) Automember rule type
+        importStatements: []
+    freeipa_automemberadd_condition:
+        subCategory: ""
+        description: FreeIPA Automember conditionresource
+        name: freeipa_automemberadd_condition
+        title: freeipa_automemberadd_condition Resource - freeipa
+        examples:
+            - name: automembercondition
+              manifest: |-
+                {
+                  "inclusiveregex": [
+                    "\\.my\\.first\\.net$",
+                    "\\.my\\.second\\.net$"
+                  ],
+                  "key": "fqdn",
+                  "name": "${freeipa_automemberadd.automember.name}",
+                  "type": "hostgroup"
+                }
+              references:
+                name: freeipa_automemberadd.automember.name
+              dependencies:
+                freeipa_automemberadd.automember: |-
+                    {
+                      "name": "${freeipa_hostgroup.hostgroup.name}",
+                      "type": "hostgroup"
+                    }
+                freeipa_hostgroup.hostgroup: |-
+                    {
+                      "description": "my-hostgroup desc",
+                      "name": "my-hostgroup"
+                    }
+        argumentDocs:
+            description: (String) Automember rule condition description
+            exclusiveregex: (List of String) Regex expression for values that should be excluded.
+            id: (String) ID of the resource
+            inclusiveregex: (List of String) Regex expression for values that should be included.
+            key: (String) Automember rule condition key
+            name: (String) Automember rule condition name
+            type: (String) Automember rule condition type
+        importStatements: []
+    freeipa_dns_record:
+        subCategory: ""
+        description: FreeIPA DNS Record resource
+        name: freeipa_dns_record
+        title: freeipa_dns_record Resource - freeipa
+        examples:
+            - name: record-8
+              manifest: |-
+                {
+                  "name": "test-record",
+                  "records": [
+                    "192.168.10.10",
+                    "192.168.10.11"
+                  ],
+                  "type": "A",
+                  "zone_name": "${resource.freeipa_dns_zone.dns_zone-2.id}"
+                }
+              references:
+                zone_name: resource.freeipa_dns_zone.dns_zone-2.id
+              dependencies:
+                freeipa_dns_zone.dns_zone-2: |-
+                    {
+                      "skip_overlap_check": true,
+                      "zone_name": "test.roman.com.ua."
+                    }
+            - name: record-7
+              manifest: |-
+                {
+                  "name": "test-record",
+                  "records": [
+                    "2 1 84DE37B22918F76ED66910B47EB440B0A35F4A56"
+                  ],
+                  "type": "SSHFP",
+                  "zone_name": "record.com.ua."
+                }
+              dependencies:
+                freeipa_dns_zone.dns_zone-2: |-
+                    {
+                      "skip_overlap_check": true,
+                      "zone_name": "test.roman.com.ua."
+                    }
+        argumentDocs:
+            id: (String) ID of the resource
+            name: (String) Record name
+            records: (List of String) A string list of records
+            set_identifier: (String) Unique identifier to differentiate records with routing policies from one another
+            ttl: (Number) Time to live
+            type: (String) The record type (A, AAAA, CNAME, MX, PTR, SRV, TXT, SSHP)
+            zone_name: (String) Zone name (FQDN)
+        importStatements: []
+    freeipa_dns_zone:
+        subCategory: ""
+        description: FreeIPA DNS Zone resource
+        name: freeipa_dns_zone
+        title: freeipa_dns_zone Resource - freeipa
+        examples:
+            - name: dns_zone-2
+              manifest: |-
+                {
+                  "disable_zone": false,
+                  "skip_overlap_check": true,
+                  "zone_name": "test.roman.com.ua"
+                }
+        argumentDocs:
+            admin_email_address: (String) Administrator e-mail address
+            allow_inline_dnssec_signing: (Boolean) Allow inline DNSSEC signing of records in the zone
+            allow_prt_sync: (Boolean) Allow synchronization of forward (A, AAAA) and reverse (PTR) records in the zone
+            allow_query: (String) Semicolon separated list of IP addresses or networks which are allowed to issue queries
+            allow_transfer: (String) Semicolon separated list of IP addresses or networks which are allowed to transfer the zone
+            authoritative_nameserver: (String) Authoritative nameserver domain name
+            bind_update_policy: (String) BIND update policy
+            computed_zone_name: '(String) Real zone name compatible with ARPA (ie: domain.tld.)'
+            default_ttl: (Number) Time to live for records without explicit TTL definition
+            disable_zone: (Boolean) Allow disabled the zone
+            dynamic_updates: (Boolean) Allow dynamic updates
+            id: (String) ID of the resource
+            is_reverse_zone: (Boolean) Allow create the reverse zone
+            nsec3param_record: '(String) NSEC3PARAM record for zone in format: hash_algorithm flags iterations salt'
+            skip_nameserver_check: (Boolean) Force DNS zone creation even if nameserver is not resolvable
+            skip_overlap_check: (Boolean) Force DNS zone creation even if it will overlap with an existing zone
+            soa_expire: (Number) SOA record expire time
+            soa_minimum: (Number) How long should negative responses be cached
+            soa_refresh: (Number) SOA record refresh time
+            soa_retry: (Number) SOA record retry time
+            ttl: (Number) Time to live for records at zone apex
+            zone_forwarders: (List of String) Per-zone forwarders. A custom port can be specified for each forwarder using a standard format IP_ADDRESS port PORT
+            zone_name: (String) Zone name (FQDN)
+        importStatements: []
+    freeipa_group:
+        subCategory: ""
+        description: FreeIPA User Group resource
+        name: freeipa_group
+        title: freeipa_group Resource - freeipa
+        examples:
+            - name: group-posix
+              manifest: |-
+                {
+                  "description": "Test group",
+                  "gid_number": "12345789",
+                  "name": "test-group"
+                }
+            - name: group-nonposix
+              manifest: |-
+                {
+                  "description": "Test group",
+                  "name": "test-group",
+                  "nonposix": true
+                }
+            - name: group-external
+              manifest: |-
+                {
+                  "description": "Test group",
+                  "external": true,
+                  "name": "test-group"
+                }
+        argumentDocs:
+            addattr: (List of String) Add an attribute/value pair. Format is attr=value. The attribute must be part of the schema.
+            description: (String) Group Description
+            external: (Boolean) Allow adding external non-IPA members from trusted domains
+            gid_number: (Number) GID (use this option to set it manually)
+            id: (String) ID of the resource
+            name: (String) Group name
+            nonposix: (Boolean) Create as a non-POSIX group
+            setattr: (List of String) Set an attribute to a name/value pair. Format is attr=value.
+        importStatements: []
+    freeipa_hbac_policy:
+        subCategory: ""
+        description: FreeIPA HBAC policy resource
+        name: freeipa_hbac_policy
+        title: freeipa_hbac_policy Resource - freeipa
+        examples:
+            - name: hbac-0
+              manifest: |-
+                {
+                  "description": "Test HBAC policy",
+                  "enabled": true,
+                  "hostcategory": "all",
+                  "name": "test-hbac",
+                  "servicecategory": "all"
+                }
+        argumentDocs:
+            description: (String) HBAC policy description
+            enabled: (Boolean) Enable this hbac policy
+            hostcategory: '(String) Host category the hbac policy is applied to (allowed value: all)'
+            id: (String) ID of the resource
+            name: (String) Name of the hbac policy
+            servicecategory: '(String) Service category the hbac policy is applied to (allowed value: all)'
+            usercategory: '(String) User category the hbac policy is applied to (allowed value: all)'
+        importStatements: []
+    freeipa_hbac_policy_host_membership:
+        subCategory: ""
+        description: FreeIPA HBAC policy host membership resource
+        name: freeipa_hbac_policy_host_membership
+        title: freeipa_hbac_policy_host_membership Resource - freeipa
+        examples:
+            - name: hbac-host-1
+              manifest: |-
+                {
+                  "host": "ipaclient1.ipatest.lan",
+                  "name": "test-hbac"
+                }
+              dependencies:
+                freeipa_hbac_policy.hbac-0: |-
+                    {
+                      "description": "Test HBAC policy",
+                      "enabled": true,
+                      "name": "test-hbac"
+                    }
+            - name: hbac-hosts-1
+              manifest: |-
+                {
+                  "hosts": [
+                    "ipaclient1.ipatest.lan",
+                    "ipaclient2.ipatest.lan"
+                  ],
+                  "identifier": "hbac-hosts-1",
+                  "name": "test-hbac"
+                }
+              dependencies:
+                freeipa_hbac_policy.hbac-0: |-
+                    {
+                      "description": "Test HBAC policy",
+                      "enabled": true,
+                      "name": "test-hbac"
+                    }
+            - name: hostgroup-3
+              manifest: |-
+                {
+                  "hostgroup": "test-hostgroup",
+                  "name": "test-hbac"
+                }
+              dependencies:
+                freeipa_hbac_policy.hbac-0: |-
+                    {
+                      "description": "Test HBAC policy",
+                      "enabled": true,
+                      "name": "test-hbac"
+                    }
+            - name: hostgroups-3
+              manifest: |-
+                {
+                  "hostgroups": [
+                    "test-hostgroup",
+                    "test-hostgroup-2"
+                  ],
+                  "identifier": "hostgroups-3",
+                  "name": "test-hbac"
+                }
+              dependencies:
+                freeipa_hbac_policy.hbac-0: |-
+                    {
+                      "description": "Test HBAC policy",
+                      "enabled": true,
+                      "name": "test-hbac"
+                    }
+        argumentDocs:
+            host: (String, Deprecated) deprecated Host to add to the HBAC policy
+            hostgroup: (String, Deprecated) deprecated Hostgroup to add to the HBAC policy
+            hostgroups: (List of String) List of hostgroups to add to the HBAC policy
+            hosts: (List of String) List of hosts to add to the HBAC policy
+            id: (String) ID of the resource
+            identifier: (String) Unique identifier to differentiate multiple HBAC policy host membership resources on the same HBAC policy. Manadatory for using hosts/hostgroups configurations.
+            name: (String) HBAC policy name
+        importStatements: []
+    freeipa_hbac_policy_service_membership:
+        subCategory: ""
+        description: FreeIPA HBAC policy service membership resource
+        name: freeipa_hbac_policy_service_membership
+        title: freeipa_hbac_policy_service_membership Resource - freeipa
+        examples:
+            - name: hbac-svc-1
+              manifest: |-
+                {
+                  "name": "test-hbac",
+                  "service": "sshd"
+                }
+              dependencies:
+                freeipa_hbac_policy.hbac-0: |-
+                    {
+                      "description": "Test HBAC policy",
+                      "enabled": true,
+                      "hostcategory": "all",
+                      "name": "test-hbac",
+                      "servicecategory": "all"
+                    }
+            - name: hbac-svc-2
+              manifest: |-
+                {
+                  "identifier": "hbac-svc-2",
+                  "name": "test-hbac",
+                  "services": [
+                    "sshd"
+                  ]
+                }
+              dependencies:
+                freeipa_hbac_policy.hbac-0: |-
+                    {
+                      "description": "Test HBAC policy",
+                      "enabled": true,
+                      "hostcategory": "all",
+                      "name": "test-hbac",
+                      "servicecategory": "all"
+                    }
+            - name: hbac-svcgrp-1
+              manifest: |-
+                {
+                  "name": "test-hbac",
+                  "servicegroup": "Sudo"
+                }
+              dependencies:
+                freeipa_hbac_policy.hbac-0: |-
+                    {
+                      "description": "Test HBAC policy",
+                      "enabled": true,
+                      "hostcategory": "all",
+                      "name": "test-hbac",
+                      "servicecategory": "all"
+                    }
+            - name: hbac-svcgrp-2
+              manifest: |-
+                {
+                  "identifier": "hbac-svcgrp-2",
+                  "name": "test-hbac",
+                  "servicegroups": [
+                    "Sudo",
+                    "ftp"
+                  ]
+                }
+              dependencies:
+                freeipa_hbac_policy.hbac-0: |-
+                    {
+                      "description": "Test HBAC policy",
+                      "enabled": true,
+                      "hostcategory": "all",
+                      "name": "test-hbac",
+                      "servicecategory": "all"
+                    }
+        argumentDocs:
+            id: (String) ID of the resource
+            identifier: (String) Unique identifier to differentiate multiple HBAC policy service membership resources on the same HBAC policy. Manadatory for using services/servicegroups configurations.
+            name: (String) HBAC policy name
+            service: (String, Deprecated) deprecated Service name the policy is applied t
+            servicegroup: (String, Deprecated) deprecated Service group name the policy is applied to
+            servicegroups: (List of String) List of service group name the policy is applied to
+            services: (List of String) List of service name the policy is applied t
+        importStatements: []
+    freeipa_hbac_policy_user_membership:
+        subCategory: ""
+        description: FreeIPA HBAC policy host membership resource
+        name: freeipa_hbac_policy_user_membership
+        title: freeipa_hbac_policy_user_membership Resource - freeipa
+        examples:
+            - name: hbac-user-1
+              manifest: |-
+                {
+                  "name": "test-hbac",
+                  "user": "user-1"
+                }
+              dependencies:
+                freeipa_hbac_policy.hbac-0: |-
+                    {
+                      "description": "Test HBAC policy",
+                      "enabled": true,
+                      "hostcategory": "all",
+                      "name": "test-hbac",
+                      "servicecategory": "all"
+                    }
+            - name: hbac-users-1
+              manifest: |-
+                {
+                  "identifier": "hbac-users-1",
+                  "name": "test-hbac",
+                  "users": [
+                    "user-2",
+                    "user-3"
+                  ]
+                }
+              dependencies:
+                freeipa_hbac_policy.hbac-0: |-
+                    {
+                      "description": "Test HBAC policy",
+                      "enabled": true,
+                      "hostcategory": "all",
+                      "name": "test-hbac",
+                      "servicecategory": "all"
+                    }
+            - name: hbac-group-1
+              manifest: |-
+                {
+                  "group": "usergroup-1",
+                  "name": "test-hbac"
+                }
+              dependencies:
+                freeipa_hbac_policy.hbac-0: |-
+                    {
+                      "description": "Test HBAC policy",
+                      "enabled": true,
+                      "hostcategory": "all",
+                      "name": "test-hbac",
+                      "servicecategory": "all"
+                    }
+            - name: hbac-groups-1
+              manifest: |-
+                {
+                  "groups": [
+                    "usergroup-2",
+                    "usergroup-3"
+                  ],
+                  "identifier": "hbac-groups-1",
+                  "name": "test-hbac"
+                }
+              dependencies:
+                freeipa_hbac_policy.hbac-0: |-
+                    {
+                      "description": "Test HBAC policy",
+                      "enabled": true,
+                      "hostcategory": "all",
+                      "name": "test-hbac",
+                      "servicecategory": "all"
+                    }
+        argumentDocs:
+            group: (String, Deprecated) deprecated User group to add to the HBAC policy
+            groups: (List of String) List of user groups to add to the HBAC policy
+            id: (String) ID of the resource
+            identifier: (String) Unique identifier to differentiate multiple HBAC policy user membership resources on the same HBAC policy. Manadatory for using users/groups configurations.
+            name: (String) HBAC policy name
+            user: (String, Deprecated) deprecated User FDQN the policy is applied to
+            users: (List of String) List of user FQDNs to add to the HBAC policy
+        importStatements: []
+    freeipa_host:
+        subCategory: ""
+        description: FreeIPA User resource
+        name: freeipa_host
+        title: freeipa_host Resource - freeipa
+        examples:
+            - name: host-1
+              manifest: |-
+                {
+                  "description": "FreeIPA client in example.test domain",
+                  "ip_address": "192.168.1.65",
+                  "mac_addresses": [
+                    "00:00:00:AA:AA:AA",
+                    "00:00:00:BB:BB:BB"
+                  ],
+                  "name": "host-1.example.test"
+                }
+        argumentDocs:
+            assigned_idview: (String) Assigned ID View
+            description: (String) A description of this host
+            force: (Boolean) Skip host's DNS check (A/AAAA) before adding it
+            generated_password: (String, Sensitive) Generated random password created at host creation
+            id: (String) ID of the resource
+            ip_address: (String) IP address of the host
+            ipasshpubkeys: (List of String) SSH public keys
+            krb_auth_indicators: (List of String) Defines a whitelist for Authentication Indicators. Use 'otp' to allow OTP-based 2FA authentications. Use 'radius' to allow RADIUS-based 2FA authentications. Other values may be used for custom configurations.
+            krb_preauth: (Boolean) Pre-authentication is required for the service
+            locality: (String) Host locality (e.g. 'Baltimore, MD')
+            location: (String) Host location (e.g. 'Lab 2')
+            mac_addresses: (List of String) Hardware MAC address(es) on this host
+            name: (String) Host name
+            operating_system: (String) Host operating system and version (e.g. 'Fedora 40')
+            platform: (String) Host hardware platform (e.g. 'Lenovo T61')
+            random_password: (Boolean) Generate a random password to be used in bulk enrollment
+            trusted_for_delegation: (Boolean) Client credentials may be delegated to the service
+            trusted_to_auth_as_delegate: (Boolean) The service is allowed to authenticate on behalf of a client
+            user_certificates: (List of String) Base-64 encoded host certificate
+            userclass: (List of String) Host category (semantics placed on this attribute are for local interpretation)
+            userpassword: (String, Sensitive) Password used in bulk enrollment
+        importStatements: []
+    freeipa_host_hostgroup_membership:
+        subCategory: ""
+        description: FreeIPA User Group Membership resource
+        name: freeipa_host_hostgroup_membership
+        title: freeipa_host_hostgroup_membership Resource - freeipa
+        examples:
+            - name: test-0
+              manifest: |-
+                {
+                  "host": "test.example.test",
+                  "name": "test-hostgroup-2"
+                }
+            - name: test-1
+              manifest: |-
+                {
+                  "hostgroup": "test-hostgroup",
+                  "name": "test-hostgroup-2"
+                }
+            - name: test-2
+              manifest: |-
+                {
+                  "hostgroups": [
+                    "test-hostgroup",
+                    "test-hostgroup2"
+                  ],
+                  "hosts": [
+                    "host1",
+                    "host2"
+                  ],
+                  "identifier": "my_unique_identifier",
+                  "name": "test-hostgroup-2"
+                }
+        argumentDocs:
+            host: (String, Deprecated) deprecated Host to add. Will be replaced by hosts.
+            hostgroup: (String, Deprecated) deprecated Hostgroup to add. Will be replaced by hostgroups.
+            hostgroups: (List of String) Hostgroups to add as hostgroup members
+            hosts: (List of String) Hosts to add as hostgroup members
+            id: (String) ID of the resource
+            identifier: (String) Unique identifier to differentiate multiple hostgroup membership resources on the same hostgroup. Manadatory for using hosts/hostgroups configurations.
+            name: (String) Hostgroup name
+        importStatements: []
+    freeipa_hostgroup:
+        subCategory: ""
+        description: FreeIPA User Group resource
+        name: freeipa_hostgroup
+        title: freeipa_hostgroup Resource - freeipa
+        examples:
+            - name: hostgroup-1
+              manifest: |-
+                {
+                  "description": "FreeIPA hostgroup",
+                  "name": "hostgroup-1"
+                }
+        argumentDocs:
+            description: (String) Hostgroup Description
+            id: (String) ID of the resource
+            name: (String) Hostgroup name
+        importStatements: []
+    freeipa_sudo_cmd:
+        subCategory: ""
+        description: FreeIPA Sudo command resource
+        name: freeipa_sudo_cmd
+        title: freeipa_sudo_cmd Resource - freeipa
+        examples:
+            - name: bash
+              manifest: |-
+                {
+                  "description": "The bash terminal",
+                  "name": "/bin/bash"
+                }
+        argumentDocs:
+            description: (String) Sudo command description
+            id: (String) ID of the resource
+            name: (String) Absolute path of the sudo command
+        importStatements: []
+    freeipa_sudo_cmdgroup:
+        subCategory: ""
+        description: FreeIPA Sudo command group resource
+        name: freeipa_sudo_cmdgroup
+        title: freeipa_sudo_cmdgroup Resource - freeipa
+        examples:
+            - name: service_management
+              manifest: |-
+                {
+                  "description": "Service management related sudo commands",
+                  "name": "service-management"
+                }
+        argumentDocs:
+            description: (String) Sudo command group description
+            id: (String) ID of the resource
+            name: (String) Name of the sudo command group
+        importStatements: []
+    freeipa_sudo_cmdgroup_membership:
+        subCategory: ""
+        description: FreeIPA Sudo command group membership resource
+        name: freeipa_sudo_cmdgroup_membership
+        title: freeipa_sudo_cmdgroup_membership Resource - freeipa
+        examples:
+            - name: terminal_bash
+              manifest: |-
+                {
+                  "name": "${freeipa_sudo_cmdgroup.terminals.id}",
+                  "sudocmd": "${freeipa_sudo_cmd.bash.id}"
+                }
+              references:
+                name: freeipa_sudo_cmdgroup.terminals.id
+                sudocmd: freeipa_sudo_cmd.bash.id
+              dependencies:
+                freeipa_sudo_cmd.bash: |-
+                    {
+                      "description": "The bash shell",
+                      "name": "/bin/bash"
+                    }
+                freeipa_sudo_cmd.fish: |-
+                    {
+                      "description": "The fish shell",
+                      "name": "/bin/fish"
+                    }
+                freeipa_sudo_cmdgroup.terminals: |-
+                    {
+                      "description": "The terminals allowed to be sudoed",
+                      "name": "terminals"
+                    }
+            - name: terminal_fish
+              manifest: |-
+                {
+                  "name": "${freeipa_sudo_cmdgroup.terminals.id}",
+                  "sudocmd": "${freeipa_sudo_cmd.fish.id}"
+                }
+              references:
+                name: freeipa_sudo_cmdgroup.terminals.id
+                sudocmd: freeipa_sudo_cmd.fish.id
+              dependencies:
+                freeipa_sudo_cmd.bash: |-
+                    {
+                      "description": "The bash shell",
+                      "name": "/bin/bash"
+                    }
+                freeipa_sudo_cmd.fish: |-
+                    {
+                      "description": "The fish shell",
+                      "name": "/bin/fish"
+                    }
+                freeipa_sudo_cmdgroup.terminals: |-
+                    {
+                      "description": "The terminals allowed to be sudoed",
+                      "name": "terminals"
+                    }
+        argumentDocs:
+            id: (String) ID of the resource
+            identifier: (String) Unique identifier to differentiate multiple sudo command group membership resources on the same sudo command group. Manadatory for using sudocmds configurations.
+            name: (String) Name of the sudo command group
+            sudocmd: (String, Deprecated) deprecated Sudo command to add as a member
+            sudocmds: (List of String) List of sudo command to add as a member
+        importStatements: []
+    freeipa_sudo_rule:
+        subCategory: ""
+        description: FreeIPA Sudo rule resource
+        name: freeipa_sudo_rule
+        title: freeipa_sudo_rule Resource - freeipa
+        examples:
+            - name: sysadmins
+              manifest: |-
+                {
+                  "description": "Sysadmins have all permissions",
+                  "name": "sysadmins"
+                }
+        argumentDocs:
+            commandcategory: '(String) Command category the sudo rule is applied to (allowed value: all)'
+            description: (String) Sudo rule description
+            enabled: (Boolean) Enable this sudo rule
+            hostcategory: '(String) Host category the sudo rule is applied to (allowed value: all)'
+            id: (String) ID of the resource
+            name: (String) Name of the sudo rule
+            order: (Number) Sudo rule order (must be unique)
+            runasgroupcategory: '(String) Run as group category the sudo rule is applied to (allowed value: all)'
+            runasusercategory: '(String) Run as user category the sudo rule is applied to (allowed value: all)'
+            usercategory: '(String) User category the sudo rule is applied to (allowed value: all)'
+        importStatements: []
+    freeipa_sudo_rule_allowcmd_membership:
+        subCategory: ""
+        description: FreeIPA Sudo rule allow command membership resource
+        name: freeipa_sudo_rule_allowcmd_membership
+        title: freeipa_sudo_rule_allowcmd_membership Resource - freeipa
+        examples:
+            - name: allowed_cmd
+              manifest: |-
+                {
+                  "name": "sudo-rule-editors",
+                  "sudocmd": "/bin/bash"
+                }
+            - name: allowed_cmd
+              manifest: |-
+                {
+                  "identifier": "allowed_bash",
+                  "name": "sudo-rule-editors",
+                  "sudocmds": [
+                    "/bin/bash"
+                  ]
+                }
+            - name: allowed_cmdgrp
+              manifest: |-
+                {
+                  "name": "sudo-rule-editors",
+                  "sudocmd_group": "allowed-terminals"
+                }
+            - name: allowed_cmdgrp
+              manifest: |-
+                {
+                  "identifier": "allowed_terminals",
+                  "name": "sudo-rule-editors",
+                  "sudocmd_groups": [
+                    "allowed-terminals"
+                  ]
+                }
+        argumentDocs:
+            id: (String) ID of the resource
+            identifier: (String) Unique identifier to differentiate multiple sudo rule denied membership resources on the same sudo rule. Manadatory for using sudocmds/sudocmd_groups configurations.
+            name: (String) Sudo rule name
+            sudocmd: (String, Deprecated) deprecated Sudo command to allow by the sudo rule
+            sudocmd_group: (String, Deprecated) deprecated Sudo command group to allow by the sudo rule
+            sudocmd_groups: (List of String) List of sudo command group to allow by the sudo rule
+            sudocmds: (List of String) List of Sudo command to allow by the sudo rule
+        importStatements: []
+    freeipa_sudo_rule_denycmd_membership:
+        subCategory: ""
+        description: FreeIPA Sudo rule deny command membership resource
+        name: freeipa_sudo_rule_denycmd_membership
+        title: freeipa_sudo_rule_denycmd_membership Resource - freeipa
+        examples:
+            - name: denied_cmd
+              manifest: |-
+                {
+                  "name": "sudo-rule-restricted",
+                  "sudocmd": "/usr/bin/systemctl"
+                }
+            - name: denied_cmd
+              manifest: |-
+                {
+                  "identifier": "denied_systemctl",
+                  "name": "sudo-rule-restricted",
+                  "sudocmds": [
+                    "/usr/bin/systemctl"
+                  ]
+                }
+            - name: denied_cmdgrp
+              manifest: |-
+                {
+                  "name": "sudo-rule-restricted",
+                  "sudocmd_group": "service-management"
+                }
+            - name: denied_cmdgrp
+              manifest: |-
+                {
+                  "identifier": "denied_services",
+                  "name": "sudo-rule-restricted",
+                  "sudocmd_groups": [
+                    "service-management"
+                  ]
+                }
+        argumentDocs:
+            id: (String) ID of the resource
+            identifier: (String) Unique identifier to differentiate multiple sudo rule allowed membership resources on the same sudo rule. Manadatory for using sudocmds/sudocmd_groups configurations.
+            name: (String) Sudo rule name
+            sudocmd: (String, Deprecated) deprecated Sudo command to deny by the sudo rule
+            sudocmd_group: (String, Deprecated) deprecated Sudo command group to deny by the sudo rule
+            sudocmd_groups: (List of String) List of sudo command group to deny by the sudo rule
+            sudocmds: (List of String) List of Sudo command to deny by the sudo rule
+        importStatements: []
+    freeipa_sudo_rule_host_membership:
+        subCategory: ""
+        description: FreeIPA Sudo rule host membership resource
+        name: freeipa_sudo_rule_host_membership
+        title: freeipa_sudo_rule_host_membership Resource - freeipa
+        examples:
+            - name: host-0
+              manifest: |-
+                {
+                  "host": "test.example.test",
+                  "name": "sudo-rule-test"
+                }
+            - name: hosts-0
+              manifest: |-
+                {
+                  "hosts": [
+                    "test.example.test"
+                  ],
+                  "identifier": "hosts-0",
+                  "name": "sudo-rule-test"
+                }
+            - name: hostgroup-3
+              manifest: |-
+                {
+                  "hostgroup": "test-hostgroup",
+                  "name": "sudo-rule-test"
+                }
+            - name: hostgroups-3
+              manifest: |-
+                {
+                  "hostgroups": [
+                    "test-hostgroup"
+                  ],
+                  "identifier": "hostgroups-3",
+                  "name": "sudo-rule-test"
+                }
+        argumentDocs:
+            host: (String, Deprecated) deprecated Host to add to the sudo rule
+            hostgroup: (String, Deprecated) deprecated Hostgroup to add to the sudo rule
+            hostgroups: (List of String) List of hostgroups to add to the sudo rule
+            hosts: (List of String) List of hosts to add to the sudo rule
+            id: (String) ID of the resource
+            identifier: (String) Unique identifier to differentiate multiple sudo rule host membership resources on the same sudo rule. Manadatory for using hosts/hostgroups configurations.
+            name: (String) Sudo rule name
+        importStatements: []
+    freeipa_sudo_rule_option:
+        subCategory: ""
+        description: FreeIPA Sudo rule option resource
+        name: freeipa_sudo_rule_option
+        title: freeipa_sudo_rule_option Resource - freeipa
+        examples:
+            - name: option-0
+              manifest: |-
+                {
+                  "name": "sudo-rule-test",
+                  "option": "!authenticate"
+                }
+        argumentDocs:
+            id: (String) ID of the resource
+            name: (String) Sudo rule name
+            option: (String) Sudo option to add to the sudo rule.
+        importStatements: []
+    freeipa_sudo_rule_runasgroup_membership:
+        subCategory: ""
+        description: FreeIPA Sudo rule run as group membership resource
+        name: freeipa_sudo_rule_runasgroup_membership
+        title: freeipa_sudo_rule_runasgroup_membership Resource - freeipa
+        examples:
+            - name: group-0
+              manifest: |-
+                {
+                  "name": "sudo-rule-test",
+                  "runasgroup": "group01"
+                }
+            - name: groups-0
+              manifest: |-
+                {
+                  "identifier": "groups-0",
+                  "name": "sudo-rule-test",
+                  "runasgroups": [
+                    "group01",
+                    "group02"
+                  ]
+                }
+        argumentDocs:
+            id: (String) ID of the resource
+            identifier: (String) Unique identifier to differentiate multiple sudo rule runasgroup membership resources on the same sudo rule. Manadatory for using runasgroups configurations.
+            name: (String) Sudo rule name
+            runasgroup: (String, Deprecated) deprecated Run As Group to add to the sudo rule. Can be an external group (local group of ipa clients)
+            runasgroups: (List of String) List of Run As Group to add to the sudo rule. Can be an external group (local group of ipa clients)
+        importStatements: []
+    freeipa_sudo_rule_runasuser_membership:
+        subCategory: ""
+        description: FreeIPA Sudo rule run as user membership resource
+        name: freeipa_sudo_rule_runasuser_membership
+        title: freeipa_sudo_rule_runasuser_membership Resource - freeipa
+        examples:
+            - name: user-0
+              manifest: |-
+                {
+                  "name": "sudo-rule-test",
+                  "runasuser": "user01"
+                }
+            - name: users-0
+              manifest: |-
+                {
+                  "identifier": "users-0",
+                  "name": "sudo-rule-test",
+                  "runasusers": [
+                    "user01",
+                    "user02"
+                  ]
+                }
+        argumentDocs:
+            id: (String) ID of the resource
+            identifier: (String) Unique identifier to differentiate multiple sudo rule runasuser membership resources on the same sudo rule. Manadatory for using runasusers configurations.
+            name: (String) Sudo rule name
+            runasuser: (String, Deprecated) deprecated Run As User to add to the sudo rule. Can be an external user (local user of ipa clients)
+            runasusers: (List of String) List of Run As User to add to the sudo rule. Can be an external user (local user of ipa clients)
+        importStatements: []
+    freeipa_sudo_rule_user_membership:
+        subCategory: ""
+        description: FreeIPA Sudo rule user membership resource
+        name: freeipa_sudo_rule_user_membership
+        title: freeipa_sudo_rule_user_membership Resource - freeipa
+        examples:
+            - name: user-0
+              manifest: |-
+                {
+                  "name": "sudo-rule-test",
+                  "user": "user01"
+                }
+            - name: users-1
+              manifest: |-
+                {
+                  "identifier": "users-1",
+                  "name": "sudo-rule-test",
+                  "users": [
+                    "user01"
+                  ]
+                }
+            - name: group-3
+              manifest: |-
+                {
+                  "group": "test-group-0",
+                  "name": "sudo-rule-test"
+                }
+            - name: groups-3
+              manifest: |-
+                {
+                  "groups": [
+                    "test-group-0"
+                  ],
+                  "identifier": "groups-3",
+                  "name": "sudo-rule-test"
+                }
+        argumentDocs:
+            group: (String, Deprecated) deprecated User group to add to the sudo rule
+            groups: (List of String) List of user groups to add to the sudo rule
+            id: (String) ID of the resource
+            identifier: (String) Unique identifier to differentiate multiple sudo rule user membership resources on the same sudo rule. Manadatory for using users/groups configurations.
+            name: (String) Sudo rule name
+            user: (String, Deprecated) deprecated User to add to the sudo rule
+            users: (List of String) List of users to add to the sudo rule
+        importStatements: []
+    freeipa_user:
+        subCategory: ""
+        description: FreeIPA User resource
+        name: freeipa_user
+        title: freeipa_user Resource - freeipa
+        examples:
+            - name: user-1
+              manifest: |-
+                {
+                  "email_address": [
+                    "roman@example.com"
+                  ],
+                  "first_name": "Roman",
+                  "last_name": "Roman",
+                  "name": "roman",
+                  "telephone_numbers": [
+                    "+380982555429",
+                    "2-10-11"
+                  ]
+                }
+        argumentDocs:
+            account_disabled: (Boolean) Account disabled
+            car_license: (List of String) Car Licenses
+            city: (String) City
+            display_name: (String) Display name
+            email_address: (List of String) Email address
+            employee_number: (String) Employee Number
+            employee_type: (String) Employee Type
+            first_name: (String) First name
+            full_name: (String) Full name
+            gecos: (String) GECOS
+            gid_number: (Number) Group ID Number
+            home_directory: (String) Home Directory
+            id: (String) ID of the resource
+            initials: (String) Initials
+            job_title: (String) Job Title
+            krb_password_expiration: (String) User password expiration RFC3339 format (see RFC3339 time string e.g., YYYY-MM-DDTHH:MM:SSZ)
+            krb_principal_expiration: (String) Kerberos principal expiration RFC3339 format (see RFC3339 time string e.g., YYYY-MM-DDTHH:MM:SSZ)
+            krb_principal_name: (List of String) Principal alias
+            last_name: (String) Last name
+            login_shell: (String) Login Shell
+            manager: (String) Manager
+            mobile_numbers: (List of String) Mobile Number
+            name: (String) UID or login
+            organisation_unit: (String) Org. Unit
+            postal_code: (String) Postal code
+            preferred_language: (String) Preferred Language
+            province: (String) Province/State/Country
+            random_password: (Boolean) Generate a random user password
+            ssh_public_key: (List of String) List of SSH public keys
+            street_address: (String) Street address
+            telephone_numbers: (List of String) Telephone Number
+            uid_number: (Number) User ID Number (system will assign one if not provided)
+            userclass: (List of String) User category (semantics placed on this attribute are for local interpretation)
+            userpassword: (String, Sensitive) Prompt to set the user password
+        importStatements: []
+    freeipa_user_group_membership:
+        subCategory: ""
+        description: FreeIPA User Group Membership resource
+        name: freeipa_user_group_membership
+        title: freeipa_user_group_membership Resource - freeipa
+        examples:
+            - name: test-0
+              manifest: |-
+                {
+                  "name": "test-group-2",
+                  "user": "roman"
+                }
+            - name: test-1
+              manifest: |-
+                {
+                  "group": "test-group",
+                  "name": "test-group-2"
+                }
+            - name: test-2
+              manifest: |-
+                {
+                  "external_member": "domain users@adtest.lan",
+                  "name": "test-group-2"
+                }
+            - name: test-3
+              manifest: |-
+                {
+                  "groups": [
+                    "group1",
+                    "group2"
+                  ],
+                  "identifier": "my_unique_identifier",
+                  "name": "test-group-3",
+                  "users": [
+                    "user1",
+                    "user2"
+                  ]
+                }
+        argumentDocs:
+            external_member: (String, Deprecated) deprecated External member to add. name must refer to an external group. (Requires a valid AD Trust configuration).. Will be replaced by external_members.
+            external_members: (List of String) External members to add as group members. name must refer to an external group. (Requires a valid AD Trust configuration).
+            group: (String, Deprecated) deprecated User group to add. Will be replaced by groups.
+            groups: (List of String) User groups to add as group members
+            id: (String) ID of the resource
+            identifier: (String) Unique identifier to differentiate multiple user group membership resources on the same group. Manadatory for using users/groups/external_members configurations.
+            name: (String) Group name
+            user: (String, Deprecated) deprecated User to add. Will be replaced by users.
+            users: (List of String) Users to add as group members
         importStatements: []

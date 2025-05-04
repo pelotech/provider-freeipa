@@ -1,0 +1,15 @@
+apiVersion: hbac_policy.pelotech/v1alpha1
+kind: Policy
+metadata:
+  annotations:
+    meta.upbound.io/example-id: hbac_policy/v1alpha1/policy
+  labels:
+    testing.upbound.io/example-name: hbac-0
+  name: hbac-0
+spec:
+  forProvider:
+    description: Test HBAC policy
+    enabled: true
+    hostcategory: all
+    name: test-hbac
+    servicecategory: all

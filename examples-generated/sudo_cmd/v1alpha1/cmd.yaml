@@ -1,0 +1,12 @@
+apiVersion: sudo_cmd.pelotech/v1alpha1
+kind: Cmd
+metadata:
+  annotations:
+    meta.upbound.io/example-id: sudo_cmd/v1alpha1/cmd
+  labels:
+    testing.upbound.io/example-name: bash
+  name: bash
+spec:
+  forProvider:
+    description: The bash terminal
+    name: /bin/bash

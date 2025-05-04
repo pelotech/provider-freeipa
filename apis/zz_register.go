@@ -10,15 +10,61 @@ package apis
 import (
 	"k8s.io/apimachinery/pkg/runtime"
 
-	v1alpha1 "github.com/upbound/upjet-provider-template/apis/null/v1alpha1"
-	v1alpha1apis "github.com/upbound/upjet-provider-template/apis/v1alpha1"
-	v1beta1 "github.com/upbound/upjet-provider-template/apis/v1beta1"
+	v1alpha1 "github.com/pelotech/provider-freeipa/apis/automemberadd/v1alpha1"
+	v1alpha1automemberadd_condition "github.com/pelotech/provider-freeipa/apis/automemberadd_condition/v1alpha1"
+	v1alpha1dns_record "github.com/pelotech/provider-freeipa/apis/dns_record/v1alpha1"
+	v1alpha1dns_zone "github.com/pelotech/provider-freeipa/apis/dns_zone/v1alpha1"
+	v1alpha1group "github.com/pelotech/provider-freeipa/apis/group/v1alpha1"
+	v1alpha1hbac_policy "github.com/pelotech/provider-freeipa/apis/hbac_policy/v1alpha1"
+	v1alpha1hbac_policy_host_membership "github.com/pelotech/provider-freeipa/apis/hbac_policy_host_membership/v1alpha1"
+	v1alpha1hbac_policy_service_membership "github.com/pelotech/provider-freeipa/apis/hbac_policy_service_membership/v1alpha1"
+	v1alpha1hbac_policy_user_membership "github.com/pelotech/provider-freeipa/apis/hbac_policy_user_membership/v1alpha1"
+	v1alpha1host "github.com/pelotech/provider-freeipa/apis/host/v1alpha1"
+	v1alpha1host_hostgroup_membership "github.com/pelotech/provider-freeipa/apis/host_hostgroup_membership/v1alpha1"
+	v1alpha1hostgroup "github.com/pelotech/provider-freeipa/apis/hostgroup/v1alpha1"
+	v1alpha1sudo_cmd "github.com/pelotech/provider-freeipa/apis/sudo_cmd/v1alpha1"
+	v1alpha1sudo_cmdgroup "github.com/pelotech/provider-freeipa/apis/sudo_cmdgroup/v1alpha1"
+	v1alpha1sudo_cmdgroup_membership "github.com/pelotech/provider-freeipa/apis/sudo_cmdgroup_membership/v1alpha1"
+	v1alpha1sudo_rule "github.com/pelotech/provider-freeipa/apis/sudo_rule/v1alpha1"
+	v1alpha1sudo_rule_allowcmd_membership "github.com/pelotech/provider-freeipa/apis/sudo_rule_allowcmd_membership/v1alpha1"
+	v1alpha1sudo_rule_denycmd_membership "github.com/pelotech/provider-freeipa/apis/sudo_rule_denycmd_membership/v1alpha1"
+	v1alpha1sudo_rule_host_membership "github.com/pelotech/provider-freeipa/apis/sudo_rule_host_membership/v1alpha1"
+	v1alpha1sudo_rule_option "github.com/pelotech/provider-freeipa/apis/sudo_rule_option/v1alpha1"
+	v1alpha1sudo_rule_runasgroup_membership "github.com/pelotech/provider-freeipa/apis/sudo_rule_runasgroup_membership/v1alpha1"
+	v1alpha1sudo_rule_runasuser_membership "github.com/pelotech/provider-freeipa/apis/sudo_rule_runasuser_membership/v1alpha1"
+	v1alpha1user "github.com/pelotech/provider-freeipa/apis/user/v1alpha1"
+	v1alpha1user_group_membership "github.com/pelotech/provider-freeipa/apis/user_group_membership/v1alpha1"
+	v1alpha1apis "github.com/pelotech/provider-freeipa/apis/v1alpha1"
+	v1beta1 "github.com/pelotech/provider-freeipa/apis/v1beta1"
 )
 
 func init() {
 	// Register the types with the Scheme so the components can map objects to GroupVersionKinds and back
 	AddToSchemes = append(AddToSchemes,
 		v1alpha1.SchemeBuilder.AddToScheme,
+		v1alpha1automemberadd_condition.SchemeBuilder.AddToScheme,
+		v1alpha1dns_record.SchemeBuilder.AddToScheme,
+		v1alpha1dns_zone.SchemeBuilder.AddToScheme,
+		v1alpha1group.SchemeBuilder.AddToScheme,
+		v1alpha1hbac_policy.SchemeBuilder.AddToScheme,
+		v1alpha1hbac_policy_host_membership.SchemeBuilder.AddToScheme,
+		v1alpha1hbac_policy_service_membership.SchemeBuilder.AddToScheme,
+		v1alpha1hbac_policy_user_membership.SchemeBuilder.AddToScheme,
+		v1alpha1host.SchemeBuilder.AddToScheme,
+		v1alpha1host_hostgroup_membership.SchemeBuilder.AddToScheme,
+		v1alpha1hostgroup.SchemeBuilder.AddToScheme,
+		v1alpha1sudo_cmd.SchemeBuilder.AddToScheme,
+		v1alpha1sudo_cmdgroup.SchemeBuilder.AddToScheme,
+		v1alpha1sudo_cmdgroup_membership.SchemeBuilder.AddToScheme,
+		v1alpha1sudo_rule.SchemeBuilder.AddToScheme,
+		v1alpha1sudo_rule_allowcmd_membership.SchemeBuilder.AddToScheme,
+		v1alpha1sudo_rule_denycmd_membership.SchemeBuilder.AddToScheme,
+		v1alpha1sudo_rule_host_membership.SchemeBuilder.AddToScheme,
+		v1alpha1sudo_rule_option.SchemeBuilder.AddToScheme,
+		v1alpha1sudo_rule_runasgroup_membership.SchemeBuilder.AddToScheme,
+		v1alpha1sudo_rule_runasuser_membership.SchemeBuilder.AddToScheme,
+		v1alpha1user.SchemeBuilder.AddToScheme,
+		v1alpha1user_group_membership.SchemeBuilder.AddToScheme,
 		v1alpha1apis.SchemeBuilder.AddToScheme,
 		v1beta1.SchemeBuilder.AddToScheme,
 	)

@@ -1,0 +1,12 @@
+apiVersion: sudo_rule_host_membership.pelotech/v1alpha1
+kind: RuleHostMembership
+metadata:
+  annotations:
+    meta.upbound.io/example-id: sudo_rule_host_membership/v1alpha1/rulehostmembership
+  labels:
+    testing.upbound.io/example-name: host-0
+  name: host-0
+spec:
+  forProvider:
+    host: test.example.test
+    name: sudo-rule-test

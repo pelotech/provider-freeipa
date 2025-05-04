@@ -1,0 +1,46 @@
+apiVersion: automemberadd_condition.pelotech/v1alpha1
+kind: Condition
+metadata:
+  annotations:
+    meta.upbound.io/example-id: automemberadd_condition/v1alpha1/condition
+  labels:
+    testing.upbound.io/example-name: automembercondition
+  name: automembercondition
+spec:
+  forProvider:
+    inclusiveregex:
+    - \.my\.first\.net$
+    - \.my\.second\.net$
+    key: fqdn
+    name: hostgroup-1
+    type: hostgroup
+
+---
+
+apiVersion: automemberadd.pelotech/v1alpha1
+kind: Automemberadd
+metadata:
+  annotations:
+    meta.upbound.io/example-id: automemberadd_condition/v1alpha1/condition
+  labels:
+    testing.upbound.io/example-name: automember
+  name: automember
+spec:
+  forProvider:
+    name: my-hostgroup
+    type: hostgroup
+
+---
+
+apiVersion: hostgroup.pelotech/v1alpha1
+kind: Hostgroup
+metadata:
+  annotations:
+    meta.upbound.io/example-id: automemberadd_condition/v1alpha1/condition
+  labels:
+    testing.upbound.io/example-name: hostgroup
+  name: hostgroup
+spec:
+  forProvider:
+    description: my-hostgroup desc
+    name: my-hostgroup

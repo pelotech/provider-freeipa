@@ -1,0 +1,31 @@
+apiVersion: dns_record.pelotech/v1alpha1
+kind: Record
+metadata:
+  annotations:
+    meta.upbound.io/example-id: dns_record/v1alpha1/record
+  labels:
+    testing.upbound.io/example-name: record-8
+  name: record-8
+spec:
+  forProvider:
+    name: test-record
+    records:
+    - 192.168.10.10
+    - 192.168.10.11
+    type: A
+    zoneName: ${resource.freeipa_dns_zone.dns_zone-2.id}
+
+---
+
+apiVersion: dns_zone.pelotech/v1alpha1
+kind: Zone
+metadata:
+  annotations:
+    meta.upbound.io/example-id: dns_record/v1alpha1/record
+  labels:
+    testing.upbound.io/example-name: dns_zone-2
+  name: dns-zone-2
+spec:
+  forProvider:
+    skipOverlapCheck: true
+    zoneName: test.roman.com.ua.

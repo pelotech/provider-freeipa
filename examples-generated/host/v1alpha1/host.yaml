@@ -1,0 +1,16 @@
+apiVersion: host.pelotech/v1alpha1
+kind: Host
+metadata:
+  annotations:
+    meta.upbound.io/example-id: host/v1alpha1/host
+  labels:
+    testing.upbound.io/example-name: host-1
+  name: host-1
+spec:
+  forProvider:
+    description: FreeIPA client in example.test domain
+    ipAddress: 192.168.1.65
+    macAddresses:
+    - 00:00:00:AA:AA:AA
+    - 00:00:00:BB:BB:BB
+    name: host-1.example.test

@@ -1,4 +1,4 @@
-module github.com/upbound/upjet-provider-template
+module github.com/pelotech/provider-freeipa
 
 go 1.21
 

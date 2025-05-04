@@ -1,0 +1,12 @@
+apiVersion: sudo_cmdgroup.pelotech/v1alpha1
+kind: Cmdgroup
+metadata:
+  annotations:
+    meta.upbound.io/example-id: sudo_cmdgroup/v1alpha1/cmdgroup
+  labels:
+    testing.upbound.io/example-name: service_management
+  name: service-management
+spec:
+  forProvider:
+    description: Service management related sudo commands
+    name: service-management

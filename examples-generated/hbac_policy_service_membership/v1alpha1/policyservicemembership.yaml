@@ -1,0 +1,30 @@
+apiVersion: hbac_policy_service_membership.pelotech/v1alpha1
+kind: PolicyServiceMembership
+metadata:
+  annotations:
+    meta.upbound.io/example-id: hbac_policy_service_membership/v1alpha1/policyservicemembership
+  labels:
+    testing.upbound.io/example-name: hbac-svc-1
+  name: hbac-svc-1
+spec:
+  forProvider:
+    name: test-hbac
+    service: sshd
+
+---
+
+apiVersion: hbac_policy.pelotech/v1alpha1
+kind: Policy
+metadata:
+  annotations:
+    meta.upbound.io/example-id: hbac_policy_service_membership/v1alpha1/policyservicemembership
+  labels:
+    testing.upbound.io/example-name: hbac-0
+  name: hbac-0
+spec:
+  forProvider:
+    description: Test HBAC policy
+    enabled: true
+    hostcategory: all
+    name: test-hbac
+    servicecategory: all

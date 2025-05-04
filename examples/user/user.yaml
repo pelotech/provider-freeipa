@@ -1,0 +1,11 @@
+apiVersion: user.pelotech/v1alpha1
+kind: User
+metadata:
+  name: hello-crossplane
+spec:
+  forProvider:
+    first_name: "Roman"
+    last_name: "Roman"
+    name: "roman"
+  providerConfigRef:
+    name: default

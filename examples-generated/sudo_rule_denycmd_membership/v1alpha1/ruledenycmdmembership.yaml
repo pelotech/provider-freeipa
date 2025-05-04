@@ -1,0 +1,12 @@
+apiVersion: sudo_rule_denycmd_membership.pelotech/v1alpha1
+kind: RuleDenycmdMembership
+metadata:
+  annotations:
+    meta.upbound.io/example-id: sudo_rule_denycmd_membership/v1alpha1/ruledenycmdmembership
+  labels:
+    testing.upbound.io/example-name: denied_cmd
+  name: denied-cmd
+spec:
+  forProvider:
+    name: sudo-rule-restricted
+    sudocmd: /usr/bin/systemctl

@@ -1,0 +1,57 @@
+apiVersion: sudo_cmdgroup_membership.pelotech/v1alpha1
+kind: CmdgroupMembership
+metadata:
+  annotations:
+    meta.upbound.io/example-id: sudo_cmdgroup_membership/v1alpha1/cmdgroupmembership
+  labels:
+    testing.upbound.io/example-name: terminal_bash
+  name: terminal-bash
+spec:
+  forProvider:
+    name: ${freeipa_sudo_cmdgroup.terminals.id}
+    sudocmd: ${freeipa_sudo_cmd.bash.id}
+
+---
+
+apiVersion: sudo_cmd.pelotech/v1alpha1
+kind: Cmd
+metadata:
+  annotations:
+    meta.upbound.io/example-id: sudo_cmdgroup_membership/v1alpha1/cmdgroupmembership
+  labels:
+    testing.upbound.io/example-name: bash
+  name: bash
+spec:
+  forProvider:
+    description: The bash shell
+    name: /bin/bash
+
+---
+
+apiVersion: sudo_cmd.pelotech/v1alpha1
+kind: Cmd
+metadata:
+  annotations:
+    meta.upbound.io/example-id: sudo_cmdgroup_membership/v1alpha1/cmdgroupmembership
+  labels:
+    testing.upbound.io/example-name: fish
+  name: fish
+spec:
+  forProvider:
+    description: The fish shell
+    name: /bin/fish
+
+---
+
+apiVersion: sudo_cmdgroup.pelotech/v1alpha1
+kind: Cmdgroup
+metadata:
+  annotations:
+    meta.upbound.io/example-id: sudo_cmdgroup_membership/v1alpha1/cmdgroupmembership
+  labels:
+    testing.upbound.io/example-name: terminals
+  name: terminals
+spec:
+  forProvider:
+    description: The terminals allowed to be sudoed
+    name: terminals

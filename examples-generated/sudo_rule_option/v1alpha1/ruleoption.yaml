@@ -1,0 +1,12 @@
+apiVersion: sudo_rule_option.pelotech/v1alpha1
+kind: RuleOption
+metadata:
+  annotations:
+    meta.upbound.io/example-id: sudo_rule_option/v1alpha1/ruleoption
+  labels:
+    testing.upbound.io/example-name: option-0
+  name: option-0
+spec:
+  forProvider:
+    name: sudo-rule-test
+    option: '!authenticate'

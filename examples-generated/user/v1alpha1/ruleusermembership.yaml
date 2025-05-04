@@ -1,0 +1,12 @@
+apiVersion: user.pelotech/v1alpha1
+kind: RuleUserMembership
+metadata:
+  annotations:
+    meta.upbound.io/example-id: user/v1alpha1/ruleusermembership
+  labels:
+    testing.upbound.io/example-name: user-0
+  name: user-0
+spec:
+  forProvider:
+    name: sudo-rule-test
+    user: user01

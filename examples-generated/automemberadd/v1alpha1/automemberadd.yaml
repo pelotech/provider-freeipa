@@ -1,0 +1,27 @@
+apiVersion: automemberadd.pelotech/v1alpha1
+kind: Automemberadd
+metadata:
+  annotations:
+    meta.upbound.io/example-id: automemberadd/v1alpha1/automemberadd
+  labels:
+    testing.upbound.io/example-name: automember
+  name: automember
+spec:
+  forProvider:
+    name: hostgroup-1
+    type: hostgroup
+
+---
+
+apiVersion: hostgroup.pelotech/v1alpha1
+kind: Hostgroup
+metadata:
+  annotations:
+    meta.upbound.io/example-id: automemberadd/v1alpha1/automemberadd
+  labels:
+    testing.upbound.io/example-name: hostgroup
+  name: hostgroup
+spec:
+  forProvider:
+    description: my-hostgroup desc
+    name: my-hostgroup

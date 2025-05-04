@@ -1,0 +1,12 @@
+apiVersion: hostgroup.pelotech/v1alpha1
+kind: Hostgroup
+metadata:
+  annotations:
+    meta.upbound.io/example-id: hostgroup/v1alpha1/hostgroup
+  labels:
+    testing.upbound.io/example-name: hostgroup-1
+  name: hostgroup-1
+spec:
+  forProvider:
+    description: FreeIPA hostgroup
+    name: hostgroup-1

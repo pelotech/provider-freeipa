@@ -1,0 +1,12 @@
+apiVersion: sudo_rule_runasuser_membership.pelotech/v1alpha1
+kind: RuleRunasuserMembership
+metadata:
+  annotations:
+    meta.upbound.io/example-id: sudo_rule_runasuser_membership/v1alpha1/rulerunasusermembership
+  labels:
+    testing.upbound.io/example-name: user-0
+  name: user-0
+spec:
+  forProvider:
+    name: sudo-rule-test
+    runasuser: user01

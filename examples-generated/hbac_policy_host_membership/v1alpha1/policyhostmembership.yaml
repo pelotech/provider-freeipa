@@ -1,0 +1,28 @@
+apiVersion: hbac_policy_host_membership.pelotech/v1alpha1
+kind: PolicyHostMembership
+metadata:
+  annotations:
+    meta.upbound.io/example-id: hbac_policy_host_membership/v1alpha1/policyhostmembership
+  labels:
+    testing.upbound.io/example-name: hbac-host-1
+  name: hbac-host-1
+spec:
+  forProvider:
+    host: ipaclient1.ipatest.lan
+    name: test-hbac
+
+---
+
+apiVersion: hbac_policy.pelotech/v1alpha1
+kind: Policy
+metadata:
+  annotations:
+    meta.upbound.io/example-id: hbac_policy_host_membership/v1alpha1/policyhostmembership
+  labels:
+    testing.upbound.io/example-name: hbac-0
+  name: hbac-0
+spec:
+  forProvider:
+    description: Test HBAC policy
+    enabled: true
+    name: test-hbac

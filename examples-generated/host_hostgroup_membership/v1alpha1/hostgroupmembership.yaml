@@ -1,0 +1,12 @@
+apiVersion: host_hostgroup_membership.pelotech/v1alpha1
+kind: HostgroupMembership
+metadata:
+  annotations:
+    meta.upbound.io/example-id: host_hostgroup_membership/v1alpha1/hostgroupmembership
+  labels:
+    testing.upbound.io/example-name: test-0
+  name: test-0
+spec:
+  forProvider:
+    host: test.example.test
+    name: test-hostgroup-2

@@ -1,0 +1,12 @@
+apiVersion: sudo_rule_allowcmd_membership.pelotech/v1alpha1
+kind: RuleAllowcmdMembership
+metadata:
+  annotations:
+    meta.upbound.io/example-id: sudo_rule_allowcmd_membership/v1alpha1/ruleallowcmdmembership
+  labels:
+    testing.upbound.io/example-name: allowed_cmd
+  name: allowed-cmd
+spec:
+  forProvider:
+    name: sudo-rule-editors
+    sudocmd: /bin/bash
